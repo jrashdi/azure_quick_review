@@ -120,7 +120,8 @@ func scan(cmd *cobra.Command, serviceScanners []scanners.IAzureScanner) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	ctx := context.Background()
+
+    ctx := context.Background()
 
 	clientOptions := &arm.ClientOptions{
 		ClientOptions: policy.ClientOptions{
@@ -232,7 +233,8 @@ func scan(cmd *cobra.Command, serviceScanners []scanners.IAzureScanner) {
 			for _, s := range serviceScanners {
 				go func(r string, s scanners.IAzureScanner) {
 					defer wg.Done()
-					res, err := retry(3, 10*time.Millisecond, &s, r, &scanContext)
+
+					res, err := retry(3, 10*time.Millisecond, s, r, &scanContext)
 					if err != nil {
 						cancel()
 						log.Fatal(err)
@@ -305,10 +307,10 @@ func scan(cmd *cobra.Command, serviceScanners []scanners.IAzureScanner) {
 	log.Println("Scan completed.")
 }
 
-func retry(attempts int, sleep time.Duration, a *scanners.IAzureScanner, r string, scanContext *scanners.ScanContext) ([]scanners.AzureServiceResult, error) {
+func retry(attempts int, sleep time.Duration, a scanners.IAzureScanner, r string, scanContext *scanners.ScanContext) ([]scanners.AzureServiceResult, error) {
 	var err error
 	for i := 0; ; i++ {
-		res, err := (*a).Scan(r, scanContext)
+		res, err := (a).Scan(r, scanContext)
 		if err == nil {
 			return res, nil
 		}
@@ -319,7 +321,7 @@ func retry(attempts int, sleep time.Duration, a *scanners.IAzureScanner, r strin
 			log.Println("Subscription Not Registered. Skipping Scan...")
 			return []scanners.AzureServiceResult{}, nil
 		}
-		
+
 		if i >= (attempts - 1) {
 			log.Printf("Retry limit reached. Error: %s", errAsString)
 			break
