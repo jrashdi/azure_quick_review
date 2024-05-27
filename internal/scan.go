@@ -14,6 +14,7 @@ import (
 	"github.com/Azure/azqr/internal/renderers"
 	"github.com/Azure/azqr/internal/renderers/csv"
 	"github.com/Azure/azqr/internal/renderers/excel"
+	"github.com/Azure/azqr/internal/renderers/word"
 	"github.com/Azure/azqr/internal/scanners"
 	"github.com/Azure/azqr/internal/to"
 	"github.com/rs/zerolog"
@@ -389,6 +390,8 @@ func Scan(params *ScanParams) {
 	}
 
 	csv.CreateCsvReport(&reportData)
+
+	word.CreateWordReport(&reportData)
 
 	log.Info().Msg("Scan completed.")
 }
